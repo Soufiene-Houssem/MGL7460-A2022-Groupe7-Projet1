@@ -1,6 +1,10 @@
 package application;
 
-public class Libraire extends Utilisateur {
+
+import entities.Livre;
+import models.GestionLivres;
+
+public class Libraire extends Utilisateur implements GestionLivres{
 	
 	private int numeroBadge;
 	
@@ -21,10 +25,36 @@ public class Libraire extends Utilisateur {
 		this.numeroBadge = numeroBadge;
 	}
 	
+	
+	
 	@Override
 	public String toString() {
 		return  "ID "+getId()+" ~~ Nom: "+ getNom() + " || Prenom: "+getPrenom()+ " || Badge: "+numeroBadge+ " || Email: "+getEmail()+" || Adresse: "+getAdresse()+ " || Téléphone: "+getTelephone();
 	}
+
+	
+	/*********************************Gestion livres*********************************/
+	
+	@Override
+	public boolean ajouterLivre() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean supprimerLivre(int reference) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean modifierLivre(Livre livre) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	
+	
 
 	
 }
