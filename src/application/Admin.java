@@ -223,48 +223,6 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 	
 	
 	/**
-	 * 
-	 * @param email
-	 * @param password
-	 * @return true si les paramètres sont correct
-	 */
-	public boolean authentification(String email, String password) {
-		
-		boolean isConnected = false;
-		try{
-			Utilisateur user = new Utilisateur();
-			PreparedStatement preparedStatement = (PreparedStatement) DbConnection.connect()
-					.prepareStatement("select * from utilisateur where email = ?");
-			preparedStatement.setString(1, email);
-			ResultSet resultSet = preparedStatement.executeQuery();
-			if(resultSet.next()) {
-				user.setId(resultSet.getInt("id"));
-				user.setNom(resultSet.getString("nom"));
-				user.setPrenom(resultSet.getString("prenom"));
-				user.setAdresse(resultSet.getString("adresse"));
-				user.setTelephone(resultSet.getInt("telephone"));
-				user.setEmail(resultSet.getString("email"));
-				user.setPassword(resultSet.getString("password"));
-				String saltvalue = resultSet.getString("salt");
-				if (PwdEncrypt.verifyUserPassword(password, user.getPassword(), saltvalue)) {
-					System.out.println("Connecté! mot de passe correct!");
-					isConnected = true;
-					
-				}else {
-					System.out.println("Mot de passe incorrect!");
-				}
-			}
-			
-			preparedStatement.close();
-		} catch ( Exception e ) {
-			System.out.println("l'émail ou le mot de passe est incorrect!");
-		}
-		return isConnected;
-		
-	}
-	
-	
-	/**
 	 * Méthode pour la modification d'un utilisateur
 	 */
 	public boolean modifierUtilisateur(Utilisateur userModifications) {
@@ -524,6 +482,57 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 			e.printStackTrace();
 		}
 		return libraire;
+	}
+	
+	/**
+	 * Méthode pour la modification d'un libraire
+	 */
+	public boolean modifierLibraire(Libraire libraireModifications) {
+		
+		boolean isModified = false;
+		try {
+			PreparedStatement selectLibraireAModifier = DbConnection.connect().prepareStatement("select * from utilisateur where id =?");
+			selectLibraireAModifier.setInt(1, libraireModifications.getId());
+			ResultSet resultSet = selectLibraireAModifier.executeQuery();
+			if (resultSet.next()) {
+				Utilisateur user = new Utilisateur();
+				user.setId(resultSet.getInt("id"));
+				user.setNom(resultSet.getString("nom"));
+				user.setPrenom(resultSet.getString("prenom"));
+				user.setAdresse(resultSet.getString("adresse"));
+				user.setTelephone(resultSet.getInt("telephone"));
+				user.setEmail(resultSet.getString("email"));
+				if(!user.getEmail().equals(libraireModifications.getEmail())) {
+					try {
+						PreparedStatement checkEmailExists = DbConnection.connect()
+								.prepareStatement("select * from utilisateur where email = ?");
+						checkEmailExists.setString(1, libraireModifications.getEmail());
+						ResultSet result = checkEmailExists.executeQuery();
+						if(result.next()) {
+							System.out.println("!!!L'email saisi existe déja!!!");
+							selectLibraireAModifier.close();
+						}else {
+							PreparedStatement updateLibraire = DbConnection.connect()
+									.prepareStatement("update utilisateur set nom = ?, prenom = ?, adresse = ?, telephone = ?, email = ? where id = ?");
+							updateLibraire.setString(1, libraireModifications.getNom());
+							updateLibraire.setString(2, libraireModifications.getPrenom());
+							updateLibraire.setString(3, libraireModifications.getAdresse());
+							updateLibraire.setInt(4, libraireModifications.getTelephone());
+							updateLibraire.setString(5, libraireModifications.getEmail());
+							isModified = updateLibraire.executeUpdate() > 0 ;
+							updateLibraire.close();
+						}
+						checkEmailExists.close();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			selectLibraireAModifier.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return isModified;
 	}
 	
 }
