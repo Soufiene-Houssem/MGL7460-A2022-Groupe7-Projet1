@@ -157,7 +157,7 @@ public class Utilisateur implements RechercheLivres {
 	public Livre rechercherLivre(int reference) {
 		Livre livre = new Livre();
 		try {
-			String sqlQuery = "select * from livre where and id = ?";
+			String sqlQuery = "select * from livre where id = ?";
 			PreparedStatement preparedStatement = DbConnection.connect().prepareStatement(sqlQuery);
 			preparedStatement.setInt(1, reference);
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -179,7 +179,7 @@ public class Utilisateur implements RechercheLivres {
 	public List<Livre> rechercherLivresByTitre(String titreARechercher) {
 		List<Livre> livres = new ArrayList<>();
 		try {
-			String sqlQuery = "select * from livre where titre like ?)";
+			String sqlQuery = "select * from livre where titre like ?";
 			PreparedStatement preparedStatement = DbConnection.connect().prepareStatement(sqlQuery);
 			titreARechercher = "%"+titreARechercher+"%";
 			preparedStatement.setString(1, titreARechercher);
