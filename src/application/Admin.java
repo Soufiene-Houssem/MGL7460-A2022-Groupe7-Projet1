@@ -25,10 +25,10 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 	public Admin() {super();}
 	
 	
-	/*************************************Méthodes de gestion des Utilisateurs*************************************/
+	/*************************************Mï¿½thodes de gestion des Utilisateurs*************************************/
 	
 	/**
-	 * Méthode pour récupérer tout les utilisateurs
+	 * Mï¿½thode pour rï¿½cupï¿½rer tout les utilisateurs
 	 */
 	public List<Utilisateur> consulterUtilisateurs(){
 		
@@ -50,7 +50,7 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 			selectUtilisateurs.close();
 		} catch(Exception e) {
 			e.printStackTrace();
-			System.out.println("Aucun utilisateur n'a été trouvé!");
+			System.out.println("Aucun utilisateur n'a ï¿½tï¿½ trouvï¿½!");
 		}
 		return users;
 	}
@@ -58,7 +58,7 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 	
 	
 	/**
-	 * Méthode d'ajout d'un utilisateur
+	 * Mï¿½thode d'ajout d'un utilisateur
 	 */
 	public boolean ajouterUtilisateur() {
 		
@@ -71,7 +71,7 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 		String prenom = sc.next();	
 		System.out.print("Entrez l'adresse: ");
 		String adresse = sc.next();	
-		System.out.print("Entrez le numéro de téléphone: ");
+		System.out.print("Entrez le numï¿½ro de tï¿½lï¿½phone: ");
 		int telephone = sc.nextInt();	
 		System.out.print("Entrez l'email: ");
 		String email = sc.next();
@@ -80,7 +80,7 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 			preparedStatement.setString(1, email);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			if(resultSet.next()) {
-				System.out.println("!!!L'email saisi existe déja!!!");
+				System.out.println("!!!L'email saisi existe dï¿½ja!!!");
 				preparedStatement.close();
 				ajouterUtilisateur();
 			}else {
@@ -90,10 +90,10 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 				String passwordCheck = sc.next();	
 				if ( password.equals(passwordCheck) ) {
 					
-			        /* Générer le Salt. */  
+			        /* Gï¿½nï¿½rer le Salt. */  
 			        String saltvalue = PwdEncrypt.getSaltvalue(30);  
 			        
-			        /* Générer un mot de passe crypté pour l'enregister a la base de données */
+			        /* Gï¿½nï¿½rer un mot de passe cryptï¿½ pour l'enregister a la base de donnï¿½es */
 			        String encryptedpassword = PwdEncrypt.generateSecurePassword(password, saltvalue);  
 			  
 			        try{
@@ -127,7 +127,7 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 	
 	/**
 	 * @param id
-	 * @return true si l'utilisateur d'id saisi est supprimé
+	 * @return true si l'utilisateur d'id saisi est supprimï¿½
 	 */
 	public boolean supprimerUtilisateur(int id) {
 		
@@ -141,10 +141,10 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 					preparedStatement.setInt(1, id);
 					if ( preparedStatement.executeUpdate() > 0 ) {
 						users.remove(users.get(i));
-						System.out.println("Utilisateur supprimé");
+						System.out.println("Utilisateur supprimï¿½");
 						isDeleted = true;
 					}else {
-						System.out.println("Erreur! Utilisateur n'a pas été supprimé!");
+						System.out.println("Erreur! Utilisateur n'a pas ï¿½tï¿½ supprimï¿½!");
 					}
 					preparedStatement.close();
 					break;
@@ -223,7 +223,7 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 	
 	
 	/**
-	 * Méthode pour la modification d'un utilisateur
+	 * Mï¿½thode pour la modification d'un utilisateur
 	 */
 	public boolean modifierUtilisateur(Utilisateur userModifications) {
 		
@@ -247,7 +247,7 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 						checkEmailExists.setString(1, userModifications.getEmail());
 						ResultSet result = checkEmailExists.executeQuery();
 						if(result.next()) {
-							System.out.println("!!!L'email saisi existe déja!!!");
+							System.out.println("!!!L'email saisi existe dï¿½ja!!!");
 							selectUtilisateurAModifier.close();
 						}else {
 							PreparedStatement updateUtilisateur = DbConnection.connect()
@@ -273,7 +273,7 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 		return isModified;
 	}
 	
-	/*************************************Méthodes de gestion des Libraires*************************************/
+	/*************************************Mï¿½thodes de gestion des Libraires*************************************/
 	
 	
 	public List<Libraire> consulterLibraires(){
@@ -298,14 +298,14 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 				selectLibraires.close();
 			} catch(Exception e) {
 				e.printStackTrace();
-				System.out.println("Aucun utilisateur n'a été trouvé!");
+				System.out.println("Aucun utilisateur n'a ï¿½tï¿½ trouvï¿½!");
 			}
 			return libraires;
 		}
 	
 	
 	/**
-	 * Méthode d'ajout d'un utilisateur
+	 * Mï¿½thode d'ajout d'un utilisateur
 	 */
 	public boolean ajouterLibraire() {
 		
@@ -318,7 +318,7 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 		String prenom = sc.next();	
 		System.out.print("Entrez l'adresse: ");
 		String adresse = sc.next();	
-		System.out.print("Entrez le numéro de téléphone: ");
+		System.out.print("Entrez le numï¿½ro de tï¿½lï¿½phone: ");
 		int telephone = sc.nextInt();	
 		System.out.print("Entrez l'email: ");
 		String email = sc.next();
@@ -327,7 +327,7 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 			preparedStatement.setString(1, email);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			if(resultSet.next()) {
-				System.out.println("!!!L'email saisi existe déja!!!");
+				System.out.println("!!!L'email saisi existe dï¿½ja!!!");
 				preparedStatement.close();
 				ajouterUtilisateur();
 			}else {
@@ -337,10 +337,10 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 				String passwordCheck = sc.next();	
 				if ( password.equals(passwordCheck) ) {
 					
-			        /* Générer le Salt. */  
+			        /* Gï¿½nï¿½rer le Salt. */  
 			        String saltvalue = PwdEncrypt.getSaltvalue(30);  
 			        
-			        /* Générer un mot de passe crypté pour l'enregister a la base de données */
+			        /* Gï¿½nï¿½rer un mot de passe cryptï¿½ pour l'enregister a la base de donnï¿½es */
 			        String encryptedpassword = PwdEncrypt.generateSecurePassword(password, saltvalue);  
 			  
 			        try{
@@ -379,7 +379,7 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 	
 	/**
 	 * @param id
-	 * @return true si le libraire d'id saisi est supprimé
+	 * @return true si le libraire d'id saisi est supprimï¿½
 	 */
 	public boolean supprimerLibraire(int id) {
 		
@@ -397,10 +397,10 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 						preparedStatement.setInt(1, id);
 						preparedStatement.executeUpdate();
 						libaires.remove(libaires.get(i));
-						System.out.println("Libraire supprimé");
+						System.out.println("Libraire supprimï¿½");
 						isDeleted = true;
 					}else {
-						System.out.println("Erreur! Libraire n'a pas été supprimé!");
+						System.out.println("Erreur! Libraire n'a pas ï¿½tï¿½ supprimï¿½!");
 					}
 					preparedStatement.close();
 					break;
@@ -485,7 +485,7 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 	}
 	
 	/**
-	 * Méthode pour la modification d'un libraire
+	 * Mï¿½thode pour la modification d'un libraire
 	 */
 	public boolean modifierLibraire(Libraire libraireModifications) {
 		
@@ -509,7 +509,7 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 						checkEmailExists.setString(1, libraireModifications.getEmail());
 						ResultSet result = checkEmailExists.executeQuery();
 						if(result.next()) {
-							System.out.println("!!!L'email saisi existe déja!!!");
+							System.out.println("!!!L'email saisi existe dï¿½ja!!!");
 							selectLibraireAModifier.close();
 						}else {
 							PreparedStatement updateLibraire = DbConnection.connect()
