@@ -93,8 +93,8 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 			        /* G�n�rer le Salt. */  
 			        String saltvalue = PwdEncrypt.getSaltvalue(30);  
 			        
-			        /* G�n�rer un mot de passe crypt� pour l'enregister a la base de donn�es */
-			        String encryptedpassword = PwdEncrypt.generateSecurePassword(password, saltvalue);  
+						/* G�n�rer un mot de passe crypt� pour l'enregister a la base de donn�es */
+						String encryptedpassword = PwdEncrypt.generateSecurePassword(password, saltvalue);  
 			  
 			        try{
 						preparedStatement = DbConnection.connect()
