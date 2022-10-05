@@ -5,19 +5,21 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
-
 import models.DbConnection;
 import models.PwdEncrypt;
 
 public class App {
 
+
+public class App {
+	
 	public static void main(String[] args) {
 		final Scanner scanner = new Scanner(System.in);
 		Utilisateur user;
 		System.out.println("~~~~~~~~~~~~~~~~~~Librairie~~~~~~~~~~~~~~~~~~");
 		System.out.println("~~~                                       ~~~");
 		System.out.println("~~~         1- S'authentifier             ~~~");
-		System.out.println("~~~         2- Créer un compte            ~~~");
+		System.out.println("~~~         2- Crï¿½er un compte            ~~~");
 		System.out.println("~~~         3- Quitter                    ~~~");
 		System.out.println("~~~                                       ~~~");
 		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
@@ -88,7 +90,7 @@ public class App {
 	 * 
 	 * @param email
 	 * @param password
-	 * @return true si les paramètres sont correct
+	 * @return true si les paramï¿½tres sont correct
 	 */
 	public static Utilisateur authentification(final String email,final String password) {
 		
@@ -116,7 +118,7 @@ public class App {
 					System.out.println("Mot de passe incorrect!");
 				}
 			}else {
-				System.out.println("L'email saisi ne correspond à aucun compte!");
+				System.out.println("L'email saisi ne correspond ï¿½ aucun compte!");
 			}
 			preparedStatement.close();
 			connxion.close();
