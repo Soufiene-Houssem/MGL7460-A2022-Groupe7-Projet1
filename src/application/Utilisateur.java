@@ -5,10 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import entities.Livre;
 import models.DbConnection;
-import models.PwdEncrypt;
 import models.RechercheLivres;
 
 public class Utilisateur implements RechercheLivres {
@@ -21,7 +19,7 @@ public class Utilisateur implements RechercheLivres {
 	private int telephone;
 	private int role;
 	
-	public Utilisateur(String nom, String prenom, String email, String password, String adresse, int telephone, int role) {
+	public Utilisateur(final String nom, final String prenom, final String email, final String password, final String adresse, final int telephone, final int role) {
 		super();
 		this.nom = nom;
 		this.prenom = prenom;
@@ -98,31 +96,6 @@ public class Utilisateur implements RechercheLivres {
 		this.role = role;
 	}
 
-	public List<Livre> findAllLivres(){
-		List<Livre> livres = new ArrayList<Livre>();
-		try {
-			PreparedStatement preparedStatement = DbConnection.connect()
-					.prepareStatement("select * from Livre");
-			ResultSet resultSet = preparedStatement.executeQuery();
-			while(resultSet.next()) {
-				Livre livre = new Livre();
-				livre.setId(resultSet.getInt("id"));
-				livre.setTitre(resultSet.getString("titre"));
-				livre.setAuteur(resultSet.getString("auteur"));
-				livre.setCategorie(resultSet.getString("categorie"));
-				livre.setAnnee(resultSet.getInt("annee"));
-				livres.add(livre);
-				System.out.println(livre.toString());
-			}
-			preparedStatement.close();
-			
-		} catch(Exception e) {
-			livres = null;
-			e.printStackTrace();
-			System.out.println("Aucun livre n'a été trouvé!");
-		}
-		return livres;
-	}
 
 	@Override
 	public String toString() {
@@ -133,11 +106,13 @@ public class Utilisateur implements RechercheLivres {
 	@Override
 	public List<Livre> consulterLivres() {
 		List<Livre> livres = new ArrayList<>();
+		PreparedStatement selectLivres;
+		ResultSet resultSet;
 		try {
-			PreparedStatement selectLivres = DbConnection.connect().prepareStatement("select * from livre");
-			ResultSet resultSet = selectLivres.executeQuery();
+			selectLivres = DbConnection.connect().prepareStatement("select * from livre");
+			resultSet = selectLivres.executeQuery();
+			Livre livre = new Livre();
 			while(resultSet.next()) {
-				Livre livre = new Livre();
 				livre.setId(resultSet.getInt("id"));
 				livre.setTitre(resultSet.getString("titre"));
 				livre.setCategorie(resultSet.getString("categorie"));
@@ -146,6 +121,7 @@ public class Utilisateur implements RechercheLivres {
 				livres.add(livre);
 				System.out.println(livre.toString());
 			}
+			resultSet.close();
 			selectLivres.close();
 		} catch(SQLException e) {
 			System.out.println(e.getMessage());
@@ -156,11 +132,13 @@ public class Utilisateur implements RechercheLivres {
 	@Override
 	public Livre rechercherLivre(int reference) {
 		Livre livre = new Livre();
+		PreparedStatement preparedStatement;
+		ResultSet resultSet;
 		try {
 			String sqlQuery = "select * from livre where id = ?";
-			PreparedStatement preparedStatement = DbConnection.connect().prepareStatement(sqlQuery);
+			preparedStatement = DbConnection.connect().prepareStatement(sqlQuery);
 			preparedStatement.setInt(1, reference);
-			ResultSet resultSet = preparedStatement.executeQuery();
+			resultSet = preparedStatement.executeQuery();
 			if (resultSet.next()) {
 				livre.setId(resultSet.getInt("id"));
 				livre.setTitre(resultSet.getString("titre"));
@@ -168,9 +146,10 @@ public class Utilisateur implements RechercheLivres {
 				livre.setAuteur(resultSet.getString("auteur"));
 				livre.setAnnee(resultSet.getInt("annee"));
 			}
+			resultSet.close();
 			preparedStatement.close();
-		} catch ( Exception e) {
-			e.printStackTrace();
+		} catch ( SQLException e) {
+			System.out.println(e.getMessage());
 		}
 		return livre;
 	}
@@ -178,14 +157,16 @@ public class Utilisateur implements RechercheLivres {
 	@Override
 	public List<Livre> rechercherLivresByTitre(String titreARechercher) {
 		List<Livre> livres = new ArrayList<>();
+		PreparedStatement preparedStatement;
+		ResultSet resultSet;
 		try {
 			String sqlQuery = "select * from livre where titre like ?";
-			PreparedStatement preparedStatement = DbConnection.connect().prepareStatement(sqlQuery);
-			titreARechercher = "%"+titreARechercher+"%";
-			preparedStatement.setString(1, titreARechercher);
-			ResultSet resultSet = preparedStatement.executeQuery();
+			preparedStatement = DbConnection.connect().prepareStatement(sqlQuery);
+			final String search = "%"+titreARechercher+"%";
+			preparedStatement.setString(1, search);
+			resultSet = preparedStatement.executeQuery();
+			Livre livre = new Livre();
 			while(resultSet.next()) {
-				Livre livre = new Livre();
 				livre.setId(resultSet.getInt("id"));
 				livre.setTitre(resultSet.getString("titre"));
 				livre.setCategorie(resultSet.getString("categorie"));
@@ -194,55 +175,14 @@ public class Utilisateur implements RechercheLivres {
 				livres.add(livre);
 				System.out.println(livre.toString());
 			}
+			resultSet.close();
 			preparedStatement.close();
-		} catch ( Exception e) {
-			e.printStackTrace();
+		} catch ( SQLException e) {
+			System.out.println(e.getMessage());
 		}
 		return livres;
 	}
-	
-	
-	/**
-	 * 
-	 * @param email
-	 * @param password
-	 * @return true si les paramètres sont correct
-	 */
-	public boolean authentification(String email, String password) {
-		
-		boolean isConnected = false;
-		try{
-			Utilisateur user = new Utilisateur();
-			PreparedStatement preparedStatement = (PreparedStatement) DbConnection.connect()
-					.prepareStatement("select * from utilisateur where email = ?");
-			preparedStatement.setString(1, email);
-			ResultSet resultSet = preparedStatement.executeQuery();
-			if(resultSet.next()) {
-				user.setId(resultSet.getInt("id"));
-				user.setNom(resultSet.getString("nom"));
-				user.setPrenom(resultSet.getString("prenom"));
-				user.setAdresse(resultSet.getString("adresse"));
-				user.setTelephone(resultSet.getInt("telephone"));
-				user.setEmail(resultSet.getString("email"));
-				user.setPassword(resultSet.getString("password"));
-				String saltvalue = resultSet.getString("salt");
-				if (PwdEncrypt.verifyUserPassword(password, user.getPassword(), saltvalue)) {
-					System.out.println("Connecté! mot de passe correct!");
-					isConnected = true;
-					
-				}else {
-					System.out.println("Mot de passe incorrect!");
-				}
-			}
-			
-			preparedStatement.close();
-		} catch ( Exception e ) {
-			System.out.println("l'émail ou le mot de passe est incorrect!");
-		}
-		return isConnected;
-		
-	}
-	
+
 	
 	
 	

@@ -18,18 +18,19 @@ import models.PwdEncrypt;
  */
 public class Admin extends Libraire implements GestionUtilisateurs,GestionLibraires{
 	
-	public Admin(String nom, String prenom, String email, String password, String adresse, int telephone, int role) {
+	public Admin(final String nom, final String prenom, final String email, final String password, final String adresse, final int telephone, final int role) {
 		super(nom, prenom, email, password, adresse, telephone, role);
 	}
 	
 	public Admin() {super();}
 	
 	
-	/*************************************Méthodes de gestion des Utilisateurs*************************************/
+	/*************Méthodes de gestion des Utilisateurs*******************/
 	
 	/**
 	 * Méthode pour récupérer tout les utilisateurs
 	 */
+	@Override
 	public List<Utilisateur> consulterUtilisateurs(){
 		
 		List<Utilisateur> users = new ArrayList<>();
@@ -48,8 +49,8 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 				System.out.println(user.toString());
 			}
 			selectUtilisateurs.close();
-		} catch(Exception e) {
-			e.printStackTrace();
+		} catch(SQLException e) {
+			System.out.println(e.getMessage());
 			System.out.println("Aucun utilisateur n'a été trouvé!");
 		}
 		return users;
@@ -60,19 +61,20 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 	/**
 	 * Méthode d'ajout d'un utilisateur
 	 */
+	@Override
 	public boolean ajouterUtilisateur() {
 		
 		boolean isAdded = false;
 		Scanner sc = new Scanner(System.in);
 		System.out.println("\n~~~~~~~~~~~~~~~~~Ajouter un utilisateur~~~~~~~~~~~~~~~~~\n");
 		System.out.print("Entrez le nom: ");
-		String nom = sc.next();	
+		final String nom = sc.next();	
 		System.out.print("Entrez le prenom: ");
-		String prenom = sc.next();	
+		final String prenom = sc.next();	
 		System.out.print("Entrez l'adresse: ");
-		String adresse = sc.next();	
+		final String adresse = sc.next();	
 		System.out.print("Entrez le numéro de téléphone: ");
-		int telephone = sc.nextInt();	
+		final int telephone = sc.nextInt();	
 		System.out.print("Entrez l'email: ");
 		String email = sc.next();
 		try{
@@ -111,13 +113,13 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 						System.out.println(result);
 						preparedStatement.close();
 						isAdded = true;
-					} catch ( Exception e) {
-						e.printStackTrace();
+					} catch ( SQLException e) {
+						System.out.println(e.getMessage());
 					}
 				}
 			}
 			preparedStatement.close();
-		} catch ( Exception e) {
+		} catch ( SQLException e) {
 			System.out.println(e.getMessage());
 		}
 		sc.close();
@@ -129,6 +131,7 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 	 * @param id
 	 * @return true si l'utilisateur d'id saisi est supprimé
 	 */
+	@Override
 	public boolean supprimerUtilisateur(int id) {
 		
 		boolean isDeleted = false;
@@ -151,9 +154,9 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 				}
 			};
 			
-		} catch(Exception e) {
+		} catch(SQLException e) {
 			users = null;
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		return isDeleted;
 	}
@@ -163,19 +166,21 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 	 * @param nomPrenom
 	 * @return liste des utilisateurs qui ont le nom et prenom qui contienent chaine saisie
 	 */
+	@Override
 	public List<Utilisateur> chercherUtilisateurByNomPrenom(String nomPrenom) {
 		List<Utilisateur> users = new ArrayList<>();
+		PreparedStatement preparedStatement;
+		ResultSet resultSet;
 		try {
 			String sqlQuery = "select id,nom,prenom,adresse,telephone,email,nom||' '||prenom as nomPrenom,prenom||' '||nom as prenomNom"
 					+ " from utilisateur"
 					+ " where role = 1 and (nom like ? or prenom like ? or nomPrenom like ? or prenomNom like ?)";
-			PreparedStatement preparedStatement = DbConnection.connect().prepareStatement(sqlQuery);
-			nomPrenom = "%"+nomPrenom+"%";
-			preparedStatement.setString(1, nomPrenom);
-			preparedStatement.setString(2, nomPrenom);
-			preparedStatement.setString(3, nomPrenom);
-			preparedStatement.setString(4, nomPrenom);
-			ResultSet resultSet = preparedStatement.executeQuery();
+			preparedStatement = DbConnection.connect().prepareStatement(sqlQuery);
+			preparedStatement.setString(1, "%"+nomPrenom+"%");
+			preparedStatement.setString(2, "%"+nomPrenom+"%");
+			preparedStatement.setString(3, "%"+nomPrenom+"%");
+			preparedStatement.setString(4, "%"+nomPrenom+"%");
+			resultSet = preparedStatement.executeQuery();
 			while(resultSet.next()) {
 				Utilisateur user = new Utilisateur();
 				user.setId(resultSet.getInt("id"));
@@ -187,9 +192,10 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 				users.add(user);
 				System.out.println(user.toString());
 			}
+			resultSet.close();
 			preparedStatement.close();
-		} catch ( Exception e) {
-			e.printStackTrace();
+		} catch ( SQLException e) {
+			System.out.println(e.getMessage());
 		}
 		return users;
 	}
@@ -198,14 +204,18 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 	 * @param nomPrenom
 	 * @return liste des utilisateurs qui ont le nom et prenom qui contienent chaine saisie
 	 */
+	@Override
 	public Utilisateur chercherUtilisateurById(int id) {
-		Utilisateur user = new Utilisateur();
+		Utilisateur user = null;
+		PreparedStatement preparedStatement;
+		ResultSet resultSet;
 		try {
-			String sqlQuery = "select * from utilisateur where role = 1 and id = ?";
-			PreparedStatement preparedStatement = DbConnection.connect().prepareStatement(sqlQuery);
+			final String sqlQuery = "select * from utilisateur where role = 1 and id = ?";
+			preparedStatement = DbConnection.connect().prepareStatement(sqlQuery);
 			preparedStatement.setInt(1, id);
-			ResultSet resultSet = preparedStatement.executeQuery();
+			resultSet = preparedStatement.executeQuery();
 			if (resultSet.next()) {
+				user = new Utilisateur();
 				user.setId(resultSet.getInt("id"));
 				user.setNom(resultSet.getString("nom"));
 				user.setPrenom(resultSet.getString("prenom"));
@@ -213,9 +223,10 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 				user.setTelephone(resultSet.getInt("telephone"));
 				user.setEmail(resultSet.getString("email"));
 			}
+			resultSet.close();
 			preparedStatement.close();
-		} catch ( Exception e) {
-			e.printStackTrace();
+		} catch ( SQLException e) {
+			System.out.println(e.getMessage());
 		}
 		return user;
 	}
@@ -225,13 +236,16 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 	/**
 	 * Méthode pour la modification d'un utilisateur
 	 */
+	@Override
 	public boolean modifierUtilisateur(Utilisateur userModifications) {
 		
 		boolean isModified = false;
+		PreparedStatement selectUtilisateurAModifier;
+		ResultSet resultSet;
 		try {
-			PreparedStatement selectUtilisateurAModifier = DbConnection.connect().prepareStatement("select * from utilisateur where id =?");
+			selectUtilisateurAModifier = DbConnection.connect().prepareStatement("select * from utilisateur where id =?");
 			selectUtilisateurAModifier.setInt(1, userModifications.getId());
-			ResultSet resultSet = selectUtilisateurAModifier.executeQuery();
+			resultSet = selectUtilisateurAModifier.executeQuery();
 			if (resultSet.next()) {
 				Utilisateur user = new Utilisateur();
 				user.setId(resultSet.getInt("id"));
@@ -262,20 +276,22 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 						}
 						checkEmailExists.close();
 					} catch (SQLException e) {
-						e.printStackTrace();
+						System.out.println(e.getMessage());
 					}
 				}
 			}
+			resultSet.close();
 			selectUtilisateurAModifier.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
 		}
 		return isModified;
 	}
 	
-	/*************************************Méthodes de gestion des Libraires*************************************/
+	/****************Méthodes de gestion des Libraires**********************/
 	
 	
+	@Override
 	public List<Libraire> consulterLibraires(){
 			
 			List<Libraire> libraires = new ArrayList<>();
@@ -296,8 +312,8 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 					System.out.println(libraire.toString());
 				}
 				selectLibraires.close();
-			} catch(Exception e) {
-				e.printStackTrace();
+			} catch(SQLException e) {
+				System.out.println(e.getMessage());
 				System.out.println("Aucun utilisateur n'a été trouvé!");
 			}
 			return libraires;
@@ -307,6 +323,7 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 	/**
 	 * Méthode d'ajout d'un utilisateur
 	 */
+	@Override
 	public boolean ajouterLibraire() {
 		
 		boolean isAdded = false;
@@ -363,13 +380,13 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 						}
 						preparedStatement.close();
 						isAdded = true;
-					} catch ( Exception e) {
-						e.printStackTrace();
+					} catch ( SQLException e) {
+						System.out.println(e.getMessage());
 					}
 				}
 			}
 			preparedStatement.close();
-		} catch ( Exception e) {
+		} catch ( SQLException e) {
 			System.out.println(e.getMessage());
 		}
 		sc.close();
@@ -381,22 +398,24 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 	 * @param id
 	 * @return true si le libraire d'id saisi est supprimé
 	 */
+	@Override
 	public boolean supprimerLibraire(int id) {
 		
 		boolean isDeleted = false;
-		List<Libraire> libaires = new ArrayList<>();
+		List<Libraire> libraires;
+		PreparedStatement preparedStatement;
 		try {
-			libaires = consulterLibraires();
-			for (int i=0; i<libaires.size(); i++){
-				if(libaires.get(i).getId()==id) {
+			libraires = consulterLibraires();
+			for (Libraire libraire : libraires) {
+				if(libraire.getId()==id) {
 					String sqlQuery = "delete from libraire where id_utilisateur = ?";
-					PreparedStatement preparedStatement = DbConnection.connect().prepareStatement(sqlQuery);
+					preparedStatement = DbConnection.connect().prepareStatement(sqlQuery);
 					preparedStatement.setInt(1, id);
 					if ( preparedStatement.executeUpdate() > 0 ) {
 						preparedStatement = DbConnection.connect().prepareStatement("delete from utilisateur where id = ?");
 						preparedStatement.setInt(1, id);
 						preparedStatement.executeUpdate();
-						libaires.remove(libaires.get(i));
+						libraires.remove(libraire);
 						System.out.println("Libraire supprimé");
 						isDeleted = true;
 					}else {
@@ -405,10 +424,10 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 					preparedStatement.close();
 					break;
 				}
-			};
+			}
 			
-		} catch(Exception e) {
-			libaires = null;
+		} catch(SQLException e) {
+			libraires = null;
 			System.out.println(e.getMessage());
 		}
 		return isDeleted;
@@ -416,24 +435,27 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 	
 	/**
 	 * @param nomPrenom
-	 * @return liste des libraires qui ont le nom et prenom qui contienent chaine saisie
+	 * @return libraires qui ont le nom et prenom qui contienent chaine saisie
 	 */
+	@Override
 	public List<Libraire> chercherLibraireByNomPrenom(String nomPrenom) {
 		List<Libraire> libraires = new ArrayList<>();
+		Libraire libraire = null;
+		PreparedStatement preparedStatement;
+		ResultSet resultSet;
 		try {
-			String sqlQuery = "select id,nom,prenom,adresse,telephone,email,numeroBadge,nom||' '||prenom as nomPrenom,prenom||' '||nom as prenomNom"
+			final String sqlQuery = "select id,nom,prenom,adresse,telephone,email,numeroBadge,nom||' '||prenom as nomPrenom,prenom||' '||nom as prenomNom"
 					+ " from utilisateur inner join libraire on utilisateur.id = libraire.id_utilisateur"
 					+ " where role = 2 and (nom like ? or prenom like ? or nomPrenom like ? or prenomNom like ?)";
-			PreparedStatement preparedStatement = DbConnection.connect().prepareStatement(sqlQuery);
-			nomPrenom = "%"+nomPrenom+"%";
-			preparedStatement.setString(1, nomPrenom);
-			preparedStatement.setString(2, nomPrenom);
-			preparedStatement.setString(3, nomPrenom);
-			preparedStatement.setString(4, nomPrenom);
-			ResultSet resultSet = preparedStatement.executeQuery();
+			preparedStatement = DbConnection.connect().prepareStatement(sqlQuery);
+			preparedStatement.setString(1, "%"+nomPrenom+"%");
+			preparedStatement.setString(2, "%"+nomPrenom+"%");
+			preparedStatement.setString(3, "%"+nomPrenom+"%");
+			preparedStatement.setString(4, "%"+nomPrenom+"%");
+			resultSet = preparedStatement.executeQuery();
 			if(resultSet.next()) {
+				libraire = new Libraire();
 				while(resultSet.next()) {
-					Libraire libraire = new Libraire();
 					libraire.setId(resultSet.getInt("id"));
 					libraire.setNom(resultSet.getString("nom"));
 					libraire.setPrenom(resultSet.getString("prenom"));
@@ -447,9 +469,10 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 			}else {
 				System.out.println("Il n'y a aucun libraire avec ce nom ou prenom!");
 			}
+			resultSet.close();
 			preparedStatement.close();
-		} catch ( Exception e) {
-			e.printStackTrace();
+		} catch ( SQLException e) {
+			System.out.println(e.getMessage());
 		}
 		return libraires;
 	}
@@ -458,13 +481,16 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 	 * @param nomPrenom
 	 * @return liste des libraire qui ont le nom et prenom qui contienent chaine saisie
 	 */
+	@Override
 	public Libraire chercherLibraireById(int id) {
 		Libraire libraire = new Libraire();
+		PreparedStatement preparedStatement;
+		ResultSet resultSet;
 		try {
-			String sqlQuery = "select * from utilisateur inner join libraire on utilisateur.id = libraire.id_utilisateur where role = 2 and id = ?";
-			PreparedStatement preparedStatement = DbConnection.connect().prepareStatement(sqlQuery);
+			final String sqlQuery = "select * from utilisateur inner join libraire on utilisateur.id = libraire.id_utilisateur where role = 2 and id = ?";
+			preparedStatement = DbConnection.connect().prepareStatement(sqlQuery);
 			preparedStatement.setInt(1, id);
-			ResultSet resultSet = preparedStatement.executeQuery();
+			resultSet = preparedStatement.executeQuery();
 			if (resultSet.next()) {
 				libraire.setId(resultSet.getInt("id"));
 				libraire.setNom(resultSet.getString("nom"));
@@ -477,9 +503,10 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 			}else {
 				System.out.println("Il n'y a aucun libraire avec cet id");
 			}
+			resultSet.close();
 			preparedStatement.close();
-		} catch ( Exception e) {
-			e.printStackTrace();
+		} catch ( SQLException e) {
+			System.out.println(e.getMessage());
 		}
 		return libraire;
 	}
@@ -490,12 +517,15 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 	public boolean modifierLibraire(Libraire libraireModifications) {
 		
 		boolean isModified = false;
+		PreparedStatement selectLibraireAModifier, checkEmailExists, updateLibraire;
+		Utilisateur user = null;
+		ResultSet resultSet, result;
 		try {
-			PreparedStatement selectLibraireAModifier = DbConnection.connect().prepareStatement("select * from utilisateur where id =?");
+			selectLibraireAModifier = DbConnection.connect().prepareStatement("select * from utilisateur where id =?");
 			selectLibraireAModifier.setInt(1, libraireModifications.getId());
-			ResultSet resultSet = selectLibraireAModifier.executeQuery();
+			resultSet = selectLibraireAModifier.executeQuery();
 			if (resultSet.next()) {
-				Utilisateur user = new Utilisateur();
+				user = new Utilisateur();
 				user.setId(resultSet.getInt("id"));
 				user.setNom(resultSet.getString("nom"));
 				user.setPrenom(resultSet.getString("prenom"));
@@ -504,15 +534,15 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 				user.setEmail(resultSet.getString("email"));
 				if(!user.getEmail().equals(libraireModifications.getEmail())) {
 					try {
-						PreparedStatement checkEmailExists = DbConnection.connect()
+						checkEmailExists = DbConnection.connect()
 								.prepareStatement("select * from utilisateur where email = ?");
 						checkEmailExists.setString(1, libraireModifications.getEmail());
-						ResultSet result = checkEmailExists.executeQuery();
+						result = checkEmailExists.executeQuery();
 						if(result.next()) {
 							System.out.println("!!!L'email saisi existe déja!!!");
 							selectLibraireAModifier.close();
 						}else {
-							PreparedStatement updateLibraire = DbConnection.connect()
+							updateLibraire = DbConnection.connect()
 									.prepareStatement("update utilisateur set nom = ?, prenom = ?, adresse = ?, telephone = ?, email = ? where id = ?");
 							updateLibraire.setString(1, libraireModifications.getNom());
 							updateLibraire.setString(2, libraireModifications.getPrenom());
@@ -522,15 +552,17 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 							isModified = updateLibraire.executeUpdate() > 0 ;
 							updateLibraire.close();
 						}
+						result.close();
 						checkEmailExists.close();
 					} catch (SQLException e) {
-						e.printStackTrace();
+						System.out.println(e.getMessage());
 					}
 				}
 			}
+			resultSet.close();
 			selectLibraireAModifier.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
 		}
 		return isModified;
 	}

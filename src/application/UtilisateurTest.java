@@ -32,14 +32,4 @@ class UtilisateurTest {
 		assertEquals(1, livres.size());
 	}
 
-	@Test
-	void testAuthentification() {
-		String email = "godkh@gmail.com";
-		String password = "123456";
-		Utilisateur user = new Utilisateur();
-		boolean connected = user.authentification(email, password);
-		assertEquals(true, connected);
-		
-	}
-
 }
