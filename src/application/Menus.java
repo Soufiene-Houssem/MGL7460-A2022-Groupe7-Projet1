@@ -42,7 +42,7 @@ public class Menus {
 		System.out.println("4- Supprimer un livre ");
 		System.out.println("5- Modifier un livre ");
 		System.out.println("6- Déconnecter ");
-		System.out.print("Veuillez saisir votre choix (Chiffre): ");
+		System.out.print("Veuillez saisir votre choix: ");
 		int [] choixPossibles = {1, 2, 3, 4, 5, 6};
 		int choix = getChoix(scanner, choixPossibles);
 		switch(choix){
@@ -198,11 +198,11 @@ public class Menus {
 	/*TO COMPLETE*/
 	public static void menuGestionLibraires(Scanner scanner, Admin user) {
 		user.consulterUtilisateurs();
-		System.out.println("1- rechercher utilisateur par id ");
-		System.out.println("2- Rechercher utilisateur par nom et/ou prenom ");
-		System.out.println("3- Ajouter un utilisateur ");
-		System.out.println("4- Supprimer un utilisateur ");
-		System.out.println("5- Modifier un utilisateur ");
+		System.out.println("1- rechercher libraire par id ");
+		System.out.println("2- Rechercher libraire par nom et/ou prenom ");
+		System.out.println("3- Ajouter un libraire ");
+		System.out.println("4- Supprimer un libraire ");
+		System.out.println("5- Modifier un libraire ");
 		System.out.println("6- Retourner au menu principal ");
 		System.out.print("Veuillez saisir votre choix (Chiffre): ");
 		int [] choixPossibles = {1, 2, 3, 4, 5, 6};
@@ -211,27 +211,27 @@ public class Menus {
 			case 1:
 				System.out.print("~ Id: ");
 				int id = scanner.nextInt();
-				user.rechercherUtilisateurById(id);
+				user.rechercherLibraireById(id);
 				break;
 			case 2:
 				System.out.print("~ Nom et/ou prénom: ");
 				String nomPrenom = scanner.nextLine();
-				user.rechercherUtilisateurByNomPrenom(nomPrenom);
+				user.rechercherLibraireByNomPrenom(nomPrenom);
 				break;
 			case 3:
-				user.ajouterUtilisateur();
-				menuGestionUtilisateurs(scanner, user);
+				user.ajouterLibraire();
+				menuGestionLibraires(scanner, user);
 				break;
 			case 4:
-				System.out.print("Veuillez saisir l'id de l'utilisateur à supprimer: ");
+				System.out.print("Veuillez saisir l'id du libraire à supprimer: ");
 				int idToDelete = scanner.nextInt();
-				user.supprimerUtilisateur(idToDelete);
+				user.supprimerLibraire(idToDelete);
 				break;
 			case 5:
-				System.out.print("Veuillez saisir l'id de l'utilisateur à modifier: ");
+				System.out.print("Veuillez saisir l'id du libraire à modifier: ");
 				int idToUpdate = scanner.nextInt();
-				user.modifierUtilisateur(idToUpdate);
-				menuGestionUtilisateurs(scanner, user);
+				user.modifierLibraire(idToUpdate);
+				menuGestionLibraires(scanner, user);
 				break;
 			case 6:
 				menuAdmin(user,scanner);

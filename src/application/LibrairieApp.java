@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import services.UtilisateurService;
 import utils.DbConnection;
@@ -34,7 +36,6 @@ public class LibrairieApp {
 		choix = Integer.parseInt(choixString);
 		switch(choix){
 			case 1:
-				System.out.println("\n\t\t~~~~~~~~~~~~~~~Authentification~~~~~~~~~~~~~~~");
 				do {
 					user = authentification(scanner);
 				}
@@ -55,7 +56,23 @@ public class LibrairieApp {
 				break;
 			case 2:
 				inscription(scanner);
-				authentification(scanner);
+				do {
+					user = authentification(scanner);
+				}
+				while (user == null);
+				switch (((Utilisateur) user).getRole()) {
+					case 1:
+						Menus.menuUtilisateur((Utilisateur)user, scanner);
+						break;
+					case 2:
+						Menus.menuLibraire((Libraire) user, scanner);
+						break;
+					case 3:
+						Menus.menuAdmin((Admin) user, scanner);
+						break;
+					default:
+						break;
+				}
 				break;
 			case 3:
 				System.out.println("Au revoir :)");
@@ -76,9 +93,17 @@ public class LibrairieApp {
 	 * @throws SQLException 
 	 */
 	public static Object authentification(Scanner scanner) {
+		System.out.println("\n\t\t~~~~~~~~~~~~~~~Authentification~~~~~~~~~~~~~~~");
 		Object user = null;  // NOPMD by houss on 10/8/22 6:39 PM
 		System.out.print("~ Email: ");
-		final String email = scanner.next();
+		String email = scanner.next();
+		Pattern validEmailRegex = Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = validEmailRegex.matcher(email);
+		while(!matcher.find()) {
+			System.out.print("!!Veuillez saisir un email valide: ");
+			email = scanner.next();
+			matcher = validEmailRegex.matcher(email);
+		}
 		System.out.print("~ Password: ");
 		final String password = scanner.next();
 		try (Connection connexion =  DbConnection.getInstance().getConnexion()){
@@ -120,7 +145,6 @@ public class LibrairieApp {
 			System.out.println(e.getMessage());
 			System.out.println("L'email ou mot de passe est incorrecte!");
 		}
-
 		return user;
 		
 	}
@@ -151,20 +175,30 @@ public class LibrairieApp {
 	public static void inscription(Scanner scanner) {
 		UtilisateurService userService = new UtilisateurService(); // NOPMD by houss on 10/9/22 3:19 PM
 		System.out.println("\n\t\t~~~~~~~~~~~~~~~Inscription~~~~~~~~~~~~~~~");
+		scanner.nextLine();
 		System.out.print("Entrez le nom: ");
-		String nom = scanner.next();	 // NOPMD by houss on 10/8/22 5:14 PM
+		String nom = scanner.nextLine();	 // NOPMD by houss on 10/8/22 5:14 PM
 		System.out.print("Entrez le prenom: ");
-		String prenom = scanner.next();	 // NOPMD by houss on 10/8/22 5:15 PM
+		String prenom = scanner.nextLine();	 // NOPMD by houss on 10/8/22 5:15 PM
 		System.out.print("Entrez l'adresse: ");
-		String adresse = scanner.next();	 // NOPMD by houss on 10/8/22 5:15 PM
+		String adresse = scanner.nextLine();	 // NOPMD by houss on 10/8/22 5:15 PM
 		System.out.print("Entrez le numéro de téléphone: ");
 		int telephone = scanner.nextInt();	 // NOPMD by houss on 10/8/22 5:15 PM
+		scanner.nextLine();
 		System.out.print("Entrez l'email: ");
 		String email = scanner.next(); // NOPMD by houss on 10/8/22 5:15 PM
+		Pattern validEmailRegex = Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = validEmailRegex.matcher(email);
+		while(!matcher.find()) {
+			System.out.print("!!Veuillez saisir un email valide: ");
+			email = scanner.next();
+			matcher = validEmailRegex.matcher(email);
+		}
+		scanner.nextLine();
 		System.out.print("Entrez le mot de passe: ");
-		String password = scanner.next();		
+		String password = scanner.nextLine();		
 		System.out.print("Veuillez confirmer le mot de passe: ");
-		String passwordCheck = scanner.next();	
+		String passwordCheck = scanner.nextLine();	
 		if ( password.equals(passwordCheck) ) {
 			Utilisateur user = new Utilisateur(nom, prenom, email, password, adresse, telephone, 1);
 			if (userService.addUtilisateur(user)) {

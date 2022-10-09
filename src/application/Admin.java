@@ -3,6 +3,8 @@ package application;
 import java.io.BufferedInputStream;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import services.LibraireService;
 import services.UtilisateurService;
@@ -57,6 +59,13 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 		int telephone = scanner.nextInt();	 // NOPMD by houss on 10/8/22 5:15 PM
 		System.out.print("Entrez l'email: ");
 		String email = scanner.next(); // NOPMD by houss on 10/8/22 5:15 PM
+		Pattern validEmailRegex = Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = validEmailRegex.matcher(email);
+		while(!matcher.find()) {
+			System.out.print("!!Veuillez saisir un email valide: ");
+			email = scanner.next();
+			matcher = validEmailRegex.matcher(email);
+		}
 		System.out.print("Entrez le mot de passe: ");
 		String password = scanner.next();		
 		System.out.print("Veuillez confirmer le mot de passe: ");
@@ -189,6 +198,13 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 		int telephone = scanner.nextInt();	 // NOPMD by houss on 10/8/22 5:15 PM
 		System.out.print("Entrez l'email: ");
 		String email = scanner.next(); // NOPMD by houss on 10/8/22 5:15 PM
+		Pattern validEmailRegex = Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = validEmailRegex.matcher(email);
+		while(!matcher.find()) {
+			System.out.print("!!Veuillez saisir un email valide: ");
+			email = scanner.next();
+			matcher = validEmailRegex.matcher(email);
+		}
 		System.out.print("Entrez le mot de passe: ");
 		String password = scanner.next();		
 		System.out.print("Veuillez confirmer le mot de passe: ");
