@@ -89,13 +89,20 @@ public class LivreService{
 	public boolean addLivre(Livre livre) {
 		boolean isAdded = false;  
 		try{
-			preparedStatement = connexion.prepareStatement("insert into livre(isbn, title, author, year, category) values (?, ?, ?, ?, ?)");
+			preparedStatement = connexion.prepareStatement("select * from livre where isbn = ?");
 			preparedStatement.setInt(1, livre.getIsbn());
-			preparedStatement.setString(2, livre.getTitle());
-			preparedStatement.setString(3, livre.getAuthor());
-			preparedStatement.setInt(4, livre.getYear());
-			preparedStatement.setString(5,livre.getCategory());
-			isAdded = preparedStatement.executeUpdate() > 0;
+			resultSet = preparedStatement.executeQuery();
+			if(resultSet.next()) {
+				System.out.println("!!!L'isbn saisi existe déja!!!");
+			}else {
+				preparedStatement = connexion.prepareStatement("insert into livre(isbn, title, author, year, category) values (?, ?, ?, ?, ?)");
+				preparedStatement.setInt(1, livre.getIsbn());
+				preparedStatement.setString(2, livre.getTitle());
+				preparedStatement.setString(3, livre.getAuthor());
+				preparedStatement.setInt(4, livre.getYear());
+				preparedStatement.setString(5,livre.getCategory());
+				isAdded = preparedStatement.executeUpdate() > 0;
+			}
 		} catch ( SQLException e) {
 			System.out.println(e.getMessage());
 		}

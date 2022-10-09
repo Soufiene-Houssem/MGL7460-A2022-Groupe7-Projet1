@@ -1,10 +1,8 @@
 package application;
 
-import entities.Livre;
-
 public interface GestionLivres {
-	public void ajouterLivre(Livre livre);
+	public void ajouterLivre();
 	public void supprimerLivre(int isbn);
-	public void modifierLivre(Livre livre);
+	public void modifierLivre(int isbn);
 
 }

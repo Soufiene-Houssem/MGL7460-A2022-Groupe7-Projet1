@@ -25,7 +25,7 @@ public class LibraireService {
 		
 		List<Libraire> libraires = new ArrayList<>();
 		try {
-			preparedStatement = connexion.prepareStatement("select * from utilisateur inner join libraire on utilisateur.id = libraire.id_utilisateur where role = 2");
+			preparedStatement = connexion.prepareStatement("select * from utilisateur inner join libraire on utilisateur.id = libraire.idUser where role = 2");
 			resultSet = preparedStatement.executeQuery();
 			while(resultSet.next()) {
 				libraires.add(new Libraire(resultSet.getInt("id"),resultSet.getString("nom"),resultSet.getString("prenom"),resultSet.getString("email"),
@@ -42,20 +42,27 @@ public class LibraireService {
         String saltvalue = PwdEncrypt.getSaltvalue(30);  // Générer le salt
         String encryptedpassword = PwdEncrypt.generateSecurePassword(libraire.getPassword(), saltvalue);  //Générer un mot de passe crypté pour l'enregister a la base de données
         try{
-			preparedStatement = connexion.prepareStatement("insert into utilisateur(nom, prenom, adresse, telephone, email, role, password, salt) values (?, ?, ?, ?, ?, ?, ?, ?)");
-			preparedStatement.setString(1, libraire.getNom());
-			preparedStatement.setString(2, libraire.getPrenom());
-			preparedStatement.setString(3, libraire.getAdresse());
-			preparedStatement.setInt(4, libraire.getTelephone());
-			preparedStatement.setString(5, libraire.getEmail());
-			preparedStatement.setInt(6, 1);
-			preparedStatement.setString(7, encryptedpassword);
-			preparedStatement.setString(8, saltvalue);
-			isAdded = preparedStatement.executeUpdate() > 0;
-			if (isAdded) {
-				preparedStatement = connexion.prepareStatement("insert into libraire(id_utilisateur) select id from utilisateur where email = ?");
-				preparedStatement.setString(1, libraire.getEmail());
-				preparedStatement.executeUpdate();
+        	preparedStatement = connexion.prepareStatement("select * from utilisateur where email = ?");
+			preparedStatement.setString(1, libraire.getEmail());
+			resultSet = preparedStatement.executeQuery();
+			if(resultSet.next()) {
+				System.out.println("!!!L'email saisi existe déja!!!");
+			}else {
+				preparedStatement = connexion.prepareStatement("insert into utilisateur(nom, prenom, adresse, telephone, email, role, password, salt) values (?, ?, ?, ?, ?, ?, ?, ?)");
+				preparedStatement.setString(1, libraire.getNom());
+				preparedStatement.setString(2, libraire.getPrenom());
+				preparedStatement.setString(3, libraire.getAdresse());
+				preparedStatement.setInt(4, libraire.getTelephone());
+				preparedStatement.setString(5, libraire.getEmail());
+				preparedStatement.setInt(6, 2);
+				preparedStatement.setString(7, encryptedpassword);
+				preparedStatement.setString(8, saltvalue);
+				isAdded = preparedStatement.executeUpdate() > 0;
+				if (isAdded) {
+					preparedStatement = connexion.prepareStatement("insert into libraire(idUser) select id from utilisateur where email = ?");
+					preparedStatement.setString(1, libraire.getEmail());
+					preparedStatement.executeUpdate();
+				}
 			}
 		} catch ( SQLException e) {
 			System.out.println(e.getMessage());
@@ -66,7 +73,7 @@ public class LibraireService {
     public boolean deleteLibraire(int id) {
     	boolean isDeleted = false;
 		try {
-			preparedStatement = connexion.prepareStatement("delete from libraire where idUtilisateur = ?");
+			preparedStatement = connexion.prepareStatement("delete from libraire where idUser = ?");
 			preparedStatement.setInt(1, id);
 			if ( preparedStatement.executeUpdate() > 0 ) {
 				preparedStatement = connexion.prepareStatement("delete from utilisateur where id = ?");
@@ -84,7 +91,7 @@ public class LibraireService {
     	List<Libraire> libraires = new ArrayList<>();
 		try {
 			String sqlQuery = "select id,nom,prenom,adresse,telephone,email,numeroBadge,nom||' '||prenom as nomPrenom,prenom||' '||nom as prenomNom"
-					+ " from utilisateur inner join libraire on utilisateur.id = libraire.id_utilisateur"
+					+ " from utilisateur inner join libraire on utilisateur.id = libraire.idUser"
 					+ " where role = 2 and (nom like ? or prenom like ? or nomPrenom like ? or prenomNom like ?)";
 			preparedStatement = connexion.prepareStatement(sqlQuery);
 			preparedStatement.setString(1, "%"+nomPrenom+"%");
@@ -105,7 +112,7 @@ public class LibraireService {
     public Libraire findLibraireById(int id) {
 		Libraire libraire = null;
 		try {
-			String sqlQuery = "select * from utilisateur inner join libraire on utilisateur.id = libraire.id_utilisateur where role = 2 and id = ?";
+			String sqlQuery = "select * from utilisateur inner join libraire on utilisateur.id = libraire.idUser where role = 2 and id = ?";
 			preparedStatement = connexion.prepareStatement(sqlQuery);
 			preparedStatement.setInt(1, id);
 			resultSet = preparedStatement.executeQuery();

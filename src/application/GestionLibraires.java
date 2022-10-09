@@ -2,9 +2,9 @@ package application;
 
 public interface GestionLibraires {
 	public void consulterLibraires();
-	public void ajouterLibraire(Libraire libraire);
+	public boolean ajouterLibraire();
 	public void supprimerLibraire(int id);
-	public void modifierLibraire(Libraire libraire);
+	public void modifierLibraire(int id);
 	public void rechercherLibraireById(int id);
 	public void rechercherLibraireByNomPrenom(String nomPrenom);
 }
