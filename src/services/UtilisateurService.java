@@ -10,6 +10,11 @@ import application.Utilisateur;
 import utils.PwdEncrypt;
 import utils.DbConnection;
 
+/**
+ * 
+ * @author houss
+ *
+ */
 public class UtilisateurService {
 	    private transient  PreparedStatement preparedStatement;
 	    private transient ResultSet resultSet;

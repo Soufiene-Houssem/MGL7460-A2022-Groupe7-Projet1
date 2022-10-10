@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 public final class DbConnection {
 
-	private static String url = "jdbc:sqlite:src/database/librairie";
+	private static String url = "jdbc:sqlite:src/database/librairie.db";
 	private transient Connection connexion;
     private static DbConnection instance;
 	

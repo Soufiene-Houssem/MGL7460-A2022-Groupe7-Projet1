@@ -4,10 +4,14 @@ package application;
 import java.io.BufferedInputStream;
 import java.util.Arrays;
 import java.util.Scanner;
-
 import entities.Livre;
 import services.LivreService;
 
+/**
+ * 
+ * @author houss
+ *
+ */
 public class Libraire extends Utilisateur implements GestionLivres{
 	
 	private int numeroBadge;

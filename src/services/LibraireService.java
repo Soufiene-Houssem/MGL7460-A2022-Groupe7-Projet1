@@ -10,6 +10,11 @@ import application.Libraire;
 import utils.DbConnection;
 import utils.PwdEncrypt;
 
+/**
+ * 
+ * @author houss
+ *
+ */
 public class LibraireService {
 
 	private transient  PreparedStatement preparedStatement;

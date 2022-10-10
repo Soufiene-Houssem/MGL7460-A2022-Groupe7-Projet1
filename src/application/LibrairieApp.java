@@ -9,11 +9,15 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import services.UtilisateurService;
 import utils.DbConnection;
 import utils.PwdEncrypt;
 
+/**
+ * 
+ * @author houss
+ *
+ */
 public class LibrairieApp {
 
 	public static void main(String[] args) {

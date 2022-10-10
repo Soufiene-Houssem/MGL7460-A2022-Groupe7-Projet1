@@ -3,6 +3,11 @@ package application;
 import java.util.Arrays;
 import java.util.Scanner;
 
+/**
+ * 
+ * @author houss
+ *
+ */
 public class Menus {
 	
 	public static void menuUtilisateur(Utilisateur user, Scanner scanner) {
@@ -96,7 +101,9 @@ public class Menus {
 				menuGestionUtilisateurs(scanner, user);
 				break;
 			case 3:
-				//menuGestionLibraires(scanner, user);
+				menuGestionLibraires(scanner, user);
+			case 4:
+				LibrairieApp.deconnexion();
 			default:
 				break;
 		}

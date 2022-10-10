@@ -5,6 +5,11 @@ import java.util.List;
 import entities.Livre;
 import services.LivreService;
 
+/**
+ * 
+ * @author houss
+ *
+ */
 public class Utilisateur implements ConsulterLivres{
 	private int id;
 	private String nom;

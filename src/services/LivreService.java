@@ -9,6 +9,11 @@ import java.util.List;
 import entities.Livre;
 import utils.DbConnection;
 
+/**
+ * 
+ * @author houss
+ *
+ */
 public class LivreService{
 	
     private transient  PreparedStatement preparedStatement;
