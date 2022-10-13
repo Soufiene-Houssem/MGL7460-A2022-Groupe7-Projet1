@@ -1,6 +1,7 @@
 package application;
 
 import java.util.Arrays;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -8,29 +9,55 @@ import java.util.Scanner;
  * @author houss
  *
  */
-public class Menus {
+public class Menus { // NOPMD by houss on 10/12/22 9:35 PM
 	
 	public static void menuUtilisateur(Utilisateur user, Scanner scanner) {
 		System.out.println("\n\nBienvenue "+user.getNom()+" "+user.getPrenom());
 		user.consulterLivres();
 		System.out.println("1- Rechercher livre par isbn ");
 		System.out.println("2- Rechercher livre par titre ");
-		System.out.println("3- Déconnecter ");
+		System.out.println("3- Rechercher livre par auteur ");
+		System.out.println("4- Déconnecter ");
 		System.out.print("Veuillez saisir votre choix: ");
-		int [] choixPossibles = {1, 2, 3};
+		int [] choixPossibles = {1, 2, 3, 4};
 		int choix = getChoix(scanner, choixPossibles);
+		int returnChoix;
 		switch(choix){
 			case 1:
 				System.out.print("Isbn: ");
-				int isbn = scanner.nextInt();
-				user.rechercherLivreByIsbn(isbn);
+				try {
+					int isbn = scanner.nextInt();
+					user.rechercherLivreByIsbn(isbn);
+				} catch(InputMismatchException ex) {
+					System.out.println("Attention! l'isbn contient que des chiffre!");
+					scanner.nextLine();
+				}
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuUtilisateur(user, scanner);
+				}
 				break;
 			case 2:
 				System.out.print("Titre: ");
-				String titre = scanner.next();
+				scanner.nextLine();
+				String titre = scanner.nextLine();
 				user.rechercherLivreByTitre(titre);
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuUtilisateur(user, scanner);
+				}
 				break;
 			case 3:
+				System.out.print("Auteur: ");
+				scanner.nextLine();
+				String auteur = scanner.nextLine();
+				user.rechercherLivreByAuteur(auteur);
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuUtilisateur(user, scanner);
+				}
+				break;
+			case 4:
 				LibrairieApp.deconnexion();
 				break;
 			default:
@@ -38,45 +65,93 @@ public class Menus {
 		}
 	}
 	
-	public static void menuLibraire(Libraire user, Scanner scanner) {
+	public static void menuLibraire(Libraire user, Scanner scanner) { // NOPMD by houss on 10/12/22 9:35 PM
 		System.out.println("\n\nBienvenue "+user.getNom()+" "+user.getPrenom());
 		user.consulterLivres();
 		System.out.println("1- Rechercher livre par isbn ");
 		System.out.println("2- Rechercher livre par titre ");
-		System.out.println("3- Ajouter un livre ");
-		System.out.println("4- Supprimer un livre ");
-		System.out.println("5- Modifier un livre ");
-		System.out.println("6- Déconnecter ");
+		System.out.println("3- Rechercher livre par auteur ");
+		System.out.println("4- Ajouter un livre ");
+		System.out.println("5- Supprimer un livre ");
+		System.out.println("6- Modifier un livre ");
+		System.out.println("7- Déconnecter ");
 		System.out.print("Veuillez saisir votre choix: ");
-		int [] choixPossibles = {1, 2, 3, 4, 5, 6};
+		int [] choixPossibles = {1, 2, 3, 4, 5, 6, 7};
 		int choix = getChoix(scanner, choixPossibles);
+		int returnChoix;
 		switch(choix){
 			case 1:
 				System.out.print("Isbn: ");
-				int isbn = scanner.nextInt();
-				user.rechercherLivreByIsbn(isbn);
+				try {
+					int isbn = scanner.nextInt();
+					user.rechercherLivreByIsbn(isbn);
+				} catch(InputMismatchException ex) {
+					System.out.println("Attention! l'isbn contient que des chiffre!");
+					scanner.nextLine();
+				}
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuLibraire(user, scanner);
+				}
 				break;
 			case 2:
 				System.out.print("Titre: ");
-				String titre = scanner.next();
+				scanner.nextLine();
+				String titre = scanner.nextLine();
 				user.rechercherLivreByTitre(titre);
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuLibraire(user, scanner);
+				}
 				break;
 			case 3:
-				user.ajouterLivre();
-				menuLibraire(user, scanner);
+				System.out.print("Auteur: ");
+				scanner.nextLine();
+				String auteur = scanner.nextLine();
+				user.rechercherLivreByAuteur(auteur);
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuLibraire(user, scanner);
+				}
 				break;
 			case 4:
-				System.out.print("Veuillez saisir l'isbn du livre à supprimer: ");
-				int isbnToDelete = scanner.nextInt();
-				user.supprimerLivre(isbnToDelete);
+				user.ajouterLivre();
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuLibraire(user, scanner);
+				}
 				break;
 			case 5:
-				System.out.print("Veuillez saisir l'isbn du livre à modifier: ");
-				int isbnToUpdate = scanner.nextInt();
-				user.modifierLivre(isbnToUpdate);
-				menuLibraire(user, scanner);
+				System.out.print("Veuillez saisir l'isbn du livre à supprimer: ");
+				try {
+					int isbnToDelete = scanner.nextInt();
+					user.supprimerLivre(isbnToDelete);
+				} catch(InputMismatchException ex) {
+					System.out.println("Attention! l'isbn contient que des chiffre!");
+					scanner.nextLine();
+				}
+				
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuLibraire(user, scanner);
+				}
 				break;
 			case 6:
+				System.out.print("Veuillez saisir l'isbn du livre à modifier: ");
+				try {
+					int isbnToUpdate = scanner.nextInt();
+					scanner.nextLine();
+					user.modifierLivre(isbnToUpdate);
+				} catch(InputMismatchException ex) {
+					System.out.println("Attention! l'isbn contient que des chiffre!");
+					scanner.nextLine();
+				}
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuLibraire(user, scanner);
+				}
+				break;
+			case 7:
 				LibrairieApp.deconnexion();
 				break;
 			default:
@@ -102,51 +177,100 @@ public class Menus {
 				break;
 			case 3:
 				menuGestionLibraires(scanner, user);
+				break;
 			case 4:
 				LibrairieApp.deconnexion();
+				break;
 			default:
 				break;
 		}
 		
 	}
 	
-	public static void menuGestionLivres(Scanner scanner, Admin user) {
+	public static void menuGestionLivres(Scanner scanner, Admin user) { // NOPMD by houss on 10/12/22 9:35 PM
+		user.consulterLivres();
 		System.out.println("1- Rechercher livre par isbn ");
 		System.out.println("2- Rechercher livre par titre ");
-		System.out.println("3- Ajouter un livre ");
-		System.out.println("4- Supprimer un livre ");
-		System.out.println("5- Modifier un livre ");
-		System.out.println("6- Retourner au menu principal ");
+		System.out.println("3- Rechercher livre par auteur ");
+		System.out.println("4- Ajouter un livre ");
+		System.out.println("5- Supprimer un livre ");
+		System.out.println("6- Modifier un livre ");
+		System.out.println("7- Retourner au menu principal ");
 		System.out.print("Veuillez saisir votre choix (Chiffre): ");
-		int [] choixPossibles = {1, 2, 3, 4, 5, 6};
+		int [] choixPossibles = {1, 2, 3, 4, 5, 6, 7};
 		int choix = getChoix(scanner, choixPossibles);
+		int returnChoix;
 		switch(choix){
 			case 1:
 				System.out.print("Isbn: ");
-				int isbn = scanner.nextInt();
-				user.rechercherLivreByIsbn(isbn);
+				try {
+					int isbn = scanner.nextInt();
+					user.rechercherLivreByIsbn(isbn);
+				} catch(InputMismatchException ex) {
+					System.out.println("Attention! l'isbn contient que des chiffre!");
+					scanner.nextLine();
+				}
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuGestionLivres(scanner, user);
+				}
 				break;
 			case 2:
 				System.out.print("Titre: ");
-				String titre = scanner.next();
+				scanner.nextLine();
+				String titre = scanner.nextLine();
 				user.rechercherLivreByTitre(titre);
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuGestionLivres(scanner, user);
+				}
 				break;
 			case 3:
-				user.ajouterLivre();
-				menuLibraire(user, scanner);
+				System.out.print("Auteur: ");
+				scanner.nextLine();
+				String auteur = scanner.nextLine();
+				user.rechercherLivreByAuteur(auteur);
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuGestionLivres(scanner, user);
+				}
 				break;
 			case 4:
-				System.out.print("Veuillez saisir l'isbn du livre à supprimer: ");
-				int isbnToDelete = scanner.nextInt();
-				user.supprimerLivre(isbnToDelete);
+				user.ajouterLivre();
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuGestionLivres(scanner, user);
+				}
 				break;
 			case 5:
-				System.out.print("Veuillez saisir l'isbn du livre à modifier: ");
-				int isbnToUpdate = scanner.nextInt();
-				user.modifierLivre(isbnToUpdate);
-				menuLibraire(user, scanner);
+				System.out.print("Veuillez saisir l'isbn du livre à supprimer: ");
+				try {
+					int isbnToDelete = scanner.nextInt();
+					user.supprimerLivre(isbnToDelete);
+				} catch(InputMismatchException  | NullPointerException ex) {
+					System.out.println("Attention! l'isbn est incorrect!");
+					scanner.nextLine();
+				}
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuGestionLivres(scanner, user);
+				}
 				break;
 			case 6:
+				System.out.print("Veuillez saisir l'isbn du livre à modifier: ");
+				try {
+					int isbnToUpdate = scanner.nextInt();
+					user.modifierLivre(isbnToUpdate);
+				} catch(InputMismatchException  | NullPointerException ex) {
+					System.out.println("Attention! l'isbn est incorrect!");
+					scanner.nextLine();
+				}
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuGestionLivres(scanner, user);
+				}
+				break;
+			case 7:
 				menuAdmin(user,scanner);
 				break;
 			default:
@@ -165,31 +289,66 @@ public class Menus {
 		System.out.print("Veuillez saisir votre choix (Chiffre): ");
 		int [] choixPossibles = {1, 2, 3, 4, 5, 6};
 		int choix = getChoix(scanner, choixPossibles);
+		int returnChoix;
 		switch(choix){
 			case 1:
 				System.out.print("~ Id: ");
-				int id = scanner.nextInt();
-				user.rechercherUtilisateurById(id);
+				try {
+					int id = scanner.nextInt();
+					user.rechercherUtilisateurById(id);
+				} catch(InputMismatchException ex) {
+					System.out.println("Attention! l'id contient que des chiffres!");
+					scanner.nextLine();
+				}
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuGestionUtilisateurs(scanner, user);
+				}
 				break;
 			case 2:
 				System.out.print("~ Nom et/ou prénom: ");
+				scanner.nextLine();
 				String nomPrenom = scanner.nextLine();
 				user.rechercherUtilisateurByNomPrenom(nomPrenom);
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuGestionUtilisateurs(scanner, user);
+				}
 				break;
 			case 3:
 				user.ajouterUtilisateur();
-				menuGestionUtilisateurs(scanner, user);
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuGestionUtilisateurs(scanner, user);
+				}
 				break;
 			case 4:
 				System.out.print("Veuillez saisir l'id de l'utilisateur à supprimer: ");
-				int idToDelete = scanner.nextInt();
-				user.supprimerUtilisateur(idToDelete);
+				try {
+					int idToDelete = scanner.nextInt();
+					user.supprimerUtilisateur(idToDelete);
+				} catch(InputMismatchException  | NullPointerException ex) {
+					System.out.println("Attention! l'id est incorrect!");
+					scanner.nextLine();
+				}
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuGestionUtilisateurs(scanner, user);
+				}
 				break;
 			case 5:
 				System.out.print("Veuillez saisir l'id de l'utilisateur à modifier: ");
-				int idToUpdate = scanner.nextInt();
-				user.modifierUtilisateur(idToUpdate);
-				menuGestionUtilisateurs(scanner, user);
+				try {
+					int idToUpdate = scanner.nextInt();
+					user.modifierUtilisateur(idToUpdate);
+				} catch(InputMismatchException  | NullPointerException ex) {
+					System.out.println("Attention! l'id est incorrect!");
+					scanner.nextLine();
+				}
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuGestionUtilisateurs(scanner, user);
+				}
 				break;
 			case 6:
 				menuAdmin(user,scanner);
@@ -204,7 +363,7 @@ public class Menus {
 	
 	/*TO COMPLETE*/
 	public static void menuGestionLibraires(Scanner scanner, Admin user) {
-		user.consulterUtilisateurs();
+		user.consulterLibraires();
 		System.out.println("1- rechercher libraire par id ");
 		System.out.println("2- Rechercher libraire par nom et/ou prenom ");
 		System.out.println("3- Ajouter un libraire ");
@@ -214,31 +373,66 @@ public class Menus {
 		System.out.print("Veuillez saisir votre choix (Chiffre): ");
 		int [] choixPossibles = {1, 2, 3, 4, 5, 6};
 		int choix = getChoix(scanner, choixPossibles);
+		int returnChoix;
 		switch(choix){
 			case 1:
 				System.out.print("~ Id: ");
-				int id = scanner.nextInt();
-				user.rechercherLibraireById(id);
+				try {
+					int id = scanner.nextInt();
+					user.rechercherLibraireById(id);
+				} catch(InputMismatchException ex) {
+					System.out.println("Attention! l'id contient que des chiffres!");
+					scanner.nextLine();
+				}
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuGestionLibraires(scanner, user);
+				}
 				break;
 			case 2:
 				System.out.print("~ Nom et/ou prénom: ");
+				scanner.nextLine();
 				String nomPrenom = scanner.nextLine();
 				user.rechercherLibraireByNomPrenom(nomPrenom);
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuGestionLibraires(scanner, user);
+				}
 				break;
 			case 3:
 				user.ajouterLibraire();
-				menuGestionLibraires(scanner, user);
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuGestionLibraires(scanner, user);
+				}
 				break;
 			case 4:
 				System.out.print("Veuillez saisir l'id du libraire à supprimer: ");
-				int idToDelete = scanner.nextInt();
-				user.supprimerLibraire(idToDelete);
+				try {
+					int idToDelete = scanner.nextInt();
+					user.supprimerLibraire(idToDelete);
+				} catch(InputMismatchException  | NullPointerException ex) {
+					System.out.println("Attention! l'id est incorrect!");
+					scanner.nextLine();
+				}
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuGestionLibraires(scanner, user);
+				}
 				break;
 			case 5:
 				System.out.print("Veuillez saisir l'id du libraire à modifier: ");
-				int idToUpdate = scanner.nextInt();
-				user.modifierLibraire(idToUpdate);
-				menuGestionLibraires(scanner, user);
+				try {
+					int idToUpdate = scanner.nextInt();
+					user.modifierLibraire(idToUpdate);
+				} catch(InputMismatchException | NullPointerException ex) {
+					System.out.println("Attention! l'id est incorrect!");
+					scanner.nextLine();
+				}
+				returnChoix = returnMenu(scanner, choixPossibles );
+				if( returnChoix==1 ) { // NOPMD by houss on 10/12/22 9:28 PM
+					menuGestionLibraires(scanner, user);
+				}
 				break;
 			case 6:
 				menuAdmin(user,scanner);
@@ -264,6 +458,13 @@ public class Menus {
 			choix = getChoix(scanner, choixPossibles);	
 		}
 		return choix;
+	}
+	
+	public static int returnMenu(Scanner scanner, int... choixPossibles) { // NOPMD by houss on 10/12/22 9:28 PM
+		System.out.println("1- retourner au menu");
+		System.out.print("Entrez votre choix: ");
+		choixPossibles = new int[]{ 1 };
+		return getChoix(scanner, choixPossibles );
 	}
 	
 }

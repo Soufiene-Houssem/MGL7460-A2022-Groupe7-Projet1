@@ -200,9 +200,14 @@ public class LibrairieApp {
 		}
 		scanner.nextLine();
 		System.out.print("Entrez le mot de passe: ");
-		String password = scanner.nextLine();		
+		String password = scanner.next();		
+		while (password.length()<6) {
+			System.out.println("Attention! le mot de passe doit contenir au moins 6 lettres ou chiffres! ");
+			System.out.print("Entrez le mot de passe: ");
+			password = scanner.next();
+		}
 		System.out.print("Veuillez confirmer le mot de passe: ");
-		String passwordCheck = scanner.nextLine();	
+		String passwordCheck = scanner.next();	
 		if ( password.equals(passwordCheck) ) {
 			Utilisateur user = new Utilisateur(nom, prenom, email, password, adresse, telephone, 1);
 			if (userService.addUtilisateur(user)) {
@@ -218,5 +223,6 @@ public class LibrairieApp {
 		
 	}
 	
+
 
 }

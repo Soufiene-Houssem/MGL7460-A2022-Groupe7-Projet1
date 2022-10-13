@@ -174,5 +174,19 @@ public class Utilisateur implements ConsulterLivres{
 		
 	}
 	
+	@Override
+	public void rechercherLivreByAuteur(String auteur) {
+		service = new LivreService();
+		List<Livre> livres = service.findLivreByAuthor(auteur);
+		if(livres.isEmpty()) {
+			System.out.println("Aucun livre n'a été trouvé!");
+		}else {
+			for (Livre livre : livres) {
+				System.out.println(livre.toString());
+			}
+		}
+		
+	}
+	
 	
 }

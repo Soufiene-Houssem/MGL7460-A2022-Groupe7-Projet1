@@ -81,9 +81,8 @@ public class LibraireService {
 			preparedStatement = connexion.prepareStatement("delete from libraire where idUser = ?");
 			preparedStatement.setInt(1, id);
 			if ( preparedStatement.executeUpdate() > 0 ) {
-				preparedStatement = connexion.prepareStatement("delete from utilisateur where id = ?");
+				preparedStatement = connexion.prepareStatement("delete from utilisateur where id = ? and role = 2");
 				preparedStatement.setInt(1, id);
-				preparedStatement.executeUpdate();
 				isDeleted = preparedStatement.executeUpdate() > 0;
 			}
 		} catch(SQLException e) {
@@ -95,9 +94,9 @@ public class LibraireService {
     public List<Libraire> findLibraireByNomPrenom(String nomPrenom) {
     	List<Libraire> libraires = new ArrayList<>();
 		try {
-			String sqlQuery = "select id,nom,prenom,adresse,telephone,email,numeroBadge,nom||' '||prenom as nomPrenom,prenom||' '||nom as prenomNom"
+			String sqlQuery = "select id,nom,prenom,adresse,telephone,email,role,numeroBadge,nom||' '||prenom as nomPrenom,prenom||' '||nom as prenomNom"
 					+ " from utilisateur inner join libraire on utilisateur.id = libraire.idUser"
-					+ " where role = 2 and (nom like ? or prenom like ? or nomPrenom like ? or prenomNom like ?)";
+					+ " where utilisateur.role = 2 and (utilisateur.nom like ? or utilisateur.prenom like ? or nomPrenom like ? or prenomNom like ?)";
 			preparedStatement = connexion.prepareStatement(sqlQuery);
 			preparedStatement.setString(1, "%"+nomPrenom+"%");
 			preparedStatement.setString(2, "%"+nomPrenom+"%");
@@ -135,21 +134,15 @@ public class LibraireService {
 		
 		boolean isModified = false;
 		try {
-			preparedStatement = connexion.prepareStatement("select * from utilisateur where email = ?");
-			preparedStatement.setString(1, libraireMods.getEmail());
-			resultSet = preparedStatement.executeQuery();
-			if(resultSet.next()) {
-				System.out.println("!!!L'email saisi existe déja!!!");
-			}else {
-				preparedStatement = connexion.prepareStatement("update utilisateur set nom = ?, prenom = ?, adresse = ?, telephone = ?, email = ? where id = ?");
-				preparedStatement.setString(1, libraireMods.getNom());
-				preparedStatement.setString(2, libraireMods.getPrenom());
-				preparedStatement.setString(3, libraireMods.getAdresse());
-				preparedStatement.setInt(4, libraireMods.getTelephone());
-				preparedStatement.setString(5, libraireMods.getEmail());
-				preparedStatement.setInt(6, libraireMods.getId());
-				isModified = preparedStatement.executeUpdate() > 0 ;
-			}
+			preparedStatement = connexion.prepareStatement("update utilisateur set nom = ?, prenom = ?, adresse = ?, telephone = ?, email = ? where id = ?");
+			preparedStatement.setString(1, libraireMods.getNom());
+			preparedStatement.setString(2, libraireMods.getPrenom());
+			preparedStatement.setString(3, libraireMods.getAdresse());
+			preparedStatement.setInt(4, libraireMods.getTelephone());
+			preparedStatement.setString(5, libraireMods.getEmail());
+			preparedStatement.setInt(6, libraireMods.getId());
+			isModified = preparedStatement.executeUpdate() > 0 ;
+		
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}

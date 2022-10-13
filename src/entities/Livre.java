@@ -49,8 +49,8 @@ public class Livre {
 
 	@Override
 	public String toString() {
-		return "Livre [isbn=" + isbn + ", title=" + title + ", author=" + author + ", year=" + year + ", category="
-				+ category + "]";
+		return " ~~ isbn:" + isbn + ", titre:" + title + ", auteur:" + author + ", annee=" + year + ", categorie="
+				+ category ;
 	}
 	
 }

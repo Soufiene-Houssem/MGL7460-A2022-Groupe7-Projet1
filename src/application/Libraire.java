@@ -64,6 +64,7 @@ public class Libraire extends Utilisateur implements GestionLivres{
 		System.out.println("\n~~~~~~~~~~~~~~~~~Ajouter un livre~~~~~~~~~~~~~~~~~\n");
 		System.out.print("Entrez le isbn: ");
 		int isbn = scanner.nextInt();	
+		scanner.nextLine();
 		System.out.print("Entrez le titre: ");
 		String title = scanner.nextLine();	 
 		System.out.print("Entrez l'auteur: ");
@@ -72,6 +73,7 @@ public class Libraire extends Utilisateur implements GestionLivres{
 		String category = scanner.nextLine();
 		System.out.print("Entrez l'année: ");
 		int year = scanner.nextInt();
+		scanner.nextLine();
 		Livre livre = new Livre(isbn, title, author, year, category); // NOPMD by houss on 10/9/22 2:33 PM
 		System.out.println("1- Confirmer \t2- Annuler");
 		System.out.print("Veuillez saisir votre choix: ");
@@ -130,6 +132,7 @@ public class Libraire extends Utilisateur implements GestionLivres{
 		System.out.print("\tEntrez l'année: ");
 		int year = scanner.nextInt();
 		livre.setYear(year);
+		scanner.nextLine();
 		System.out.println("1- Confirmer \t2- Annuler");
 		System.out.print("Veuillez saisir votre choix: ");
 		int [] choixPossibles = {1, 2};

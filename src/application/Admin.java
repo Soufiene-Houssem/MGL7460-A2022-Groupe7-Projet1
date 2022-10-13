@@ -38,9 +38,11 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 		if(users.isEmpty()) {
 			System.out.println("Aucun utilisateur n'a été trouvé!");
 		}else {
+			System.out.println("\n\t\t~~~~~~~~~~~~~~~Liste des utilisateurs~~~~~~~~~~~~~~~");
 			for (Utilisateur user : users) {
 				System.out.println(user.toString());
 			}
+			System.out.println("\t\t~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		}
 	}
 	
@@ -48,15 +50,16 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 	public void ajouterUtilisateur() {
 		userService = new UtilisateurService();
 		Scanner scanner = new Scanner(new BufferedInputStream(System.in), "UTF-8"); // NOPMD by houss on 10/8/22 5:03 PM
-		System.out.println("\n~~~~~~~~~~~~~~~~~Ajouter un utilisateur~~~~~~~~~~~~~~~~~\n");
+		System.out.println("\n\t\t~~~~~~~~~~~~~~~Ajouter un utilisateur~~~~~~~~~~~~~~~");
 		System.out.print("Entrez le nom: ");
-		String nom = scanner.next();	 // NOPMD by houss on 10/8/22 5:14 PM
+		String nom = scanner.nextLine();	 // NOPMD by houss on 10/8/22 5:14 PM
 		System.out.print("Entrez le prenom: ");
-		String prenom = scanner.next();	 // NOPMD by houss on 10/8/22 5:15 PM
+		String prenom = scanner.nextLine();	 // NOPMD by houss on 10/8/22 5:15 PM
 		System.out.print("Entrez l'adresse: ");
-		String adresse = scanner.next();	 // NOPMD by houss on 10/8/22 5:15 PM
+		String adresse = scanner.nextLine();	 // NOPMD by houss on 10/8/22 5:15 PM
 		System.out.print("Entrez le numéro de téléphone: ");
 		int telephone = scanner.nextInt();	 // NOPMD by houss on 10/8/22 5:15 PM
+		scanner.nextLine();
 		System.out.print("Entrez l'email: ");
 		String email = scanner.next(); // NOPMD by houss on 10/8/22 5:15 PM
 		Pattern validEmailRegex = Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", Pattern.CASE_INSENSITIVE);
@@ -67,32 +70,47 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 			matcher = validEmailRegex.matcher(email);
 		}
 		System.out.print("Entrez le mot de passe: ");
-		String password = scanner.next();		
+		String password = scanner.next();
+		while (password.length()<6) {
+			System.out.println("Attention! le mot de passe doit contenir au moins 6 lettres ou chiffres! ");
+			System.out.print("Entrez le mot de passe: ");
+			password = scanner.next();
+		}
 		System.out.print("Veuillez confirmer le mot de passe: ");
 		String passwordCheck = scanner.next();	
 		if ( password.equals(passwordCheck) ) {
-			Utilisateur user = new Utilisateur(nom, prenom, email, password, adresse, telephone, 1);
-			if (userService.addUtilisateur(user)) {
-				System.out.println("Utilisateur a été ajouté avec succes!");
-			}else {
-				System.out.println("Utilisateur n'a pas été ajouté!");
-				ajouterUtilisateur();
+			System.out.println("1- Confirmer \t2- Annuler");
+			System.out.print("Veuillez saisir votre choix: ");
+			int [] choixPossibles = {1, 2};
+			int choix = getChoix(scanner, choixPossibles);
+			if (choix == 1) { // NOPMD by houss on 10/9/22 1:34 PM
+				Utilisateur user = new Utilisateur(nom, prenom, email, password, adresse, telephone, 1);
+				if (userService.addUtilisateur(user)) {
+					System.out.println("Utilisateur a été ajouté avec succes!");
+				}else {
+					System.out.println("Utilisateur n'a pas été ajouté!");
+				}
 			}
 		}else {
 			System.out.println("\n\nMot de passe n'a pas été confirmé!");
-			ajouterUtilisateur();
 		}
-		scanner.close();
 		
 	}
 	
 	@Override
 	public void supprimerUtilisateur(int id) {
 		userService = new UtilisateurService();
-		if (userService.deleteUtilisateur(id)) {
-			System.out.println("Utilisateur supprimé avec succes!");
-		}else {
-			System.out.println("Utilisateur n'a pas été supprimé!");
+		Scanner scanner = new Scanner(new BufferedInputStream(System.in), "UTF-8"); // NOPMD by houss on 10/8/22 5:03 PM
+		System.out.println("1- Confirmer \t2- Annuler");
+		System.out.print("Veuillez saisir votre choix: ");
+		int [] choixPossibles = {1, 2};
+		int choix = getChoix(scanner, choixPossibles);
+		if (choix == 1) { // NOPMD by houss on 10/9/22 1:34 PM
+			if (userService.deleteUtilisateur(id)) {
+				System.out.println("Utilisateur supprimé avec succes!");
+			}else {
+				System.out.println("Utilisateur n'a pas été supprimé! (n'existe pas)");
+			}
 		}
 	}
 	
@@ -118,6 +136,7 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 		System.out.print("\tEntrez le nouveau numéro de téléphone: ");
 		int telephone = scanner.nextInt();	 // NOPMD by houss on 10/8/22 5:15 PM
 		user.setTelephone(telephone);
+		scanner.nextLine();
 		System.out.println("1- Confirmer \t2- Annuler");
 		System.out.print("Veuillez saisir votre choix: ");
 		int [] choixPossibles = {1, 2};
@@ -126,7 +145,7 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 			if (userService.updateUtilisateur(user)) {
 				System.out.println("Utilisateur a été modifié avec succes!");
 			}else {
-				System.out.println("Utilisateur n'a pas été modifié!");
+				System.out.println("Utilisateur n'a pas été modifié! (n'existe pas)");
 			}
 		}
 		
@@ -166,28 +185,37 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 		if(libraires.isEmpty()) {
 			System.out.println("Aucun libraire n'a été trouvé!");
 		}else {
+			System.out.println("\n\t\t~~~~~~~~~~~~~~~Liste des libraires~~~~~~~~~~~~~~~");
 			for (Libraire libraire : libraires) {
 				System.out.println(libraire.toString());
 			}
+			System.out.println("\t\t~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		}
 	}
 	
 	@Override
 	public void supprimerLibraire(int id) {
 		libraireService = new LibraireService();
-		if (libraireService.deleteLibraire(id)) {
-			System.out.println("Libraire supprimé avec succes!");
-		}else {
-			System.out.println("Libraire n'a pas été supprimé!");
+		Scanner scanner = new Scanner(new BufferedInputStream(System.in), "UTF-8"); // NOPMD by houss on 10/8/22 5:03 PM
+		System.out.println("1- Confirmer \t2- Annuler");
+		System.out.print("Veuillez saisir votre choix: ");
+		int [] choixPossibles = {1, 2};
+		int choix = getChoix(scanner, choixPossibles);
+		if (choix == 1) { // NOPMD by houss on 10/9/22 1:34 PM
+			if (libraireService.deleteLibraire(id)) {
+				System.out.println("Libraire supprimé avec succes!");
+			}else {
+				System.out.println("Libraire n'a pas été supprimé! (n'existe pas)");
+			}
 		}
+		
 	}
 	
 	@Override
-	public boolean ajouterLibraire() {
+	public void ajouterLibraire() {
 		libraireService = new LibraireService();
-		boolean isAdded = false; // NOPMD by houss on 10/8/22 6:25 PM
 		Scanner scanner = new Scanner(new BufferedInputStream(System.in), "UTF-8"); // NOPMD by houss on 10/8/22 5:03 PM
-		System.out.println("\n~~~~~~~~~~~~~~~~~Ajouter un utilisateur~~~~~~~~~~~~~~~~~\n");
+		System.out.println("\n\t\t~~~~~~~~~~~~~~~Ajouter un libraire~~~~~~~~~~~~~~~");
 		System.out.print("Entrez le nom: ");
 		String nom = scanner.next();	 // NOPMD by houss on 10/8/22 5:14 PM
 		System.out.print("Entrez le prenom: ");
@@ -206,24 +234,28 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 			matcher = validEmailRegex.matcher(email);
 		}
 		System.out.print("Entrez le mot de passe: ");
-		String password = scanner.next();		
+		String password = scanner.next();
+		while (password.length()<6) {
+			System.out.println("Attention! le mot de passe doit contenir au moins 6 lettres ou chiffres! ");
+			System.out.print("Entrez le mot de passe: ");
+			password = scanner.next();
+		}
 		System.out.print("Veuillez confirmer le mot de passe: ");
 		String passwordCheck = scanner.next();	
 		if ( password.equals(passwordCheck) ) {
-			Libraire libraire = new Libraire(nom, prenom, email, password, adresse, telephone, 2);
-			if (libraireService.addLibraire(libraire)) {
-				System.out.println("Libraire a été ajouté avec succes!");
-			}else {
-				System.out.println("Libraire n'a pas été ajouté!");
-				ajouterLibraire();
-				
+			System.out.println("1- Confirmer \t2- Annuler");
+			System.out.print("Veuillez saisir votre choix: ");
+			int [] choixPossibles = {1, 2};
+			int choix = getChoix(scanner, choixPossibles);
+			if (choix == 1) { // NOPMD by houss on 10/9/22 1:34 PM
+				Libraire libraire = new Libraire(nom, prenom, email, password, adresse, telephone, 2);
+				if (libraireService.addLibraire(libraire)) {
+					System.out.println("Libraire a été ajouté avec succes!");
+				}
 			}
 		}else {
 			System.out.println("Mot de passe n'a pas été confirmé!");
-			ajouterLibraire();
 		}
-		scanner.close();
-		return isAdded;
 	}
 	
 	@Override
@@ -231,7 +263,7 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 		LibraireService service = new LibraireService();
 		Libraire libraire = service.findLibraireById(id);
 		Scanner scanner = new Scanner(new BufferedInputStream(System.in), "UTF-8"); // NOPMD by houss on 10/8/22 5:03 PM
-		System.out.println("\n\t\t~~~~~~~~~~~~~~~Modifier un utilisateur~~~~~~~~~~~~~~~");
+		System.out.println("\n\t\t~~~~~~~~~~~~~~~Modifier un libraire~~~~~~~~~~~~~~~");
 		System.out.print("~ Nom: "+libraire.getNom());
 		System.out.print("\tEntrez le nouveau nom: ");
 		String nom = scanner.nextLine();	 // NOPMD by houss on 10/8/22 5:14 PM
@@ -257,7 +289,7 @@ public class Admin extends Libraire implements GestionUtilisateurs,GestionLibrai
 			if (libraireService.updateLibraire(libraire)) {
 				System.out.println("Libraire a été modifié avec succes!");
 			}else {
-				System.out.println("Libraire n'a pas été modifié!");
+				System.out.println("Libraire n'a pas été modifié! (n'existe pas)");
 			}
 		}
 	}

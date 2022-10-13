@@ -72,6 +72,23 @@ public class LivreService{
 		return livres;
 	}
 	
+	public List<Livre> findLivreByAuthor(String searchAuthor) {
+		List<Livre> livres = new ArrayList<>();
+		try {
+			String sqlQuery = "select * from livre where author like ?";
+			preparedStatement = connexion.prepareStatement(sqlQuery);
+			final String search = "%"+searchAuthor+"%";
+			preparedStatement.setString(1, search);
+			resultSet = preparedStatement.executeQuery();
+			while(resultSet.next()) {
+				livres.add(new Livre(resultSet.getInt("isbn"), resultSet.getString("title"), resultSet.getString("author"), resultSet.getInt("year"), resultSet.getString("category")));
+			}
+		} catch ( SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return livres;
+	}
+	
 	public Livre findLivreByIsbn(int isbn) {
 		Livre livre = null;
 		try {

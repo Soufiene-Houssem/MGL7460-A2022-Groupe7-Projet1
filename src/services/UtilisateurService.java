@@ -73,7 +73,7 @@ public class UtilisateurService {
 	    public boolean deleteUtilisateur(int id) {
 	    	boolean isDeleted = false;
 			try {
-				preparedStatement = connexion.prepareStatement("delete from utilisateur where id = ?");
+				preparedStatement = connexion.prepareStatement("delete from utilisateur where id = ? and role = 1");
 				preparedStatement.setInt(1, id);
 				isDeleted = preparedStatement.executeUpdate() > 0;
 			} catch(SQLException e) {
@@ -85,7 +85,7 @@ public class UtilisateurService {
 	    public List<Utilisateur> findUtilisateurByNomPrenom(String nomPrenom) {
 	    	List<Utilisateur> users = new ArrayList<>();
 			try {
-				String sqlQuery = "select id,nom,prenom,adresse,telephone,email,nom||' '||prenom as nomPrenom,prenom||' '||nom as prenomNom"
+				String sqlQuery = "select id,nom,prenom,adresse,telephone,email,role,nom||' '||prenom as nomPrenom,prenom||' '||nom as prenomNom"
 						+ " from utilisateur"
 						+ " where role = 1 and (nom like ? or prenom like ? or nomPrenom like ? or prenomNom like ?)";
 				preparedStatement = connexion.prepareStatement(sqlQuery);
@@ -123,23 +123,16 @@ public class UtilisateurService {
 	    
 	    public boolean updateUtilisateur(Utilisateur userModifications) {
 			
-			boolean isModified = false;
+			boolean isModified = false; // NOPMD by houss on 10/10/22 8:20 PM
 			try {
-				preparedStatement = connexion.prepareStatement("select * from utilisateur where email = ?");
-				preparedStatement.setString(1, userModifications.getEmail());
-				resultSet = preparedStatement.executeQuery();
-				if(resultSet.next()) {
-					System.out.println("!!!L'email saisi existe déja!!!");
-				}else {
-					preparedStatement = connexion.prepareStatement("update utilisateur set nom = ?, prenom = ?, adresse = ?, telephone = ?, email = ? where id = ?");
-					preparedStatement.setString(1, userModifications.getNom());
-					preparedStatement.setString(2, userModifications.getPrenom());
-					preparedStatement.setString(3, userModifications.getAdresse());
-					preparedStatement.setInt(4, userModifications.getTelephone());
-					preparedStatement.setString(5, userModifications.getEmail());
-					preparedStatement.setInt(6, userModifications.getId());
-					isModified = preparedStatement.executeUpdate() > 0 ;
-				}
+				preparedStatement = connexion.prepareStatement("update utilisateur set nom = ?, prenom = ?, adresse = ?, telephone = ?, email = ? where id = ?");
+				preparedStatement.setString(1, userModifications.getNom());
+				preparedStatement.setString(2, userModifications.getPrenom());
+				preparedStatement.setString(3, userModifications.getAdresse());
+				preparedStatement.setInt(4, userModifications.getTelephone());
+				preparedStatement.setString(5, userModifications.getEmail());
+				preparedStatement.setInt(6, userModifications.getId());
+				isModified = preparedStatement.executeUpdate() > 0 ;
 			} catch (SQLException e) {
 				System.out.println(e.getMessage());
 			}
